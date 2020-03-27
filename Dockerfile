@@ -11,7 +11,7 @@ RUN git clone https://github.com/cytomine-uliege/Cytomine-python-client.git && \
 # Metric for PixCla is pure python so don't need java, nor binaries
 RUN apt-get update && apt-get install libgeos-dev -y && apt-get clean
 RUN git clone https://github.com/Neubias-WG5/biaflows-utilities.git && \
-    cd /biaflows-utilities/ && git checkout tags/v0.9.0-alpha.2 && pip install . && \
+    cd /biaflows-utilities/ && git checkout tags/v0.9.0-alpha.3 && pip install . && \
     rm -r /biaflows-utilities
 
 ADD script.py /app/script.py

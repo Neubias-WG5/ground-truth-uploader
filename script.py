@@ -2,7 +2,8 @@ import os
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 
-from biaflows.helpers.data_preparation import download_images
+import imageio
+from biaflows.helpers.data_preparation import download_images, prepare_data, download_attached
 from cytomine import Cytomine
 
 from biaflows.helpers import upload_data
@@ -10,6 +11,8 @@ from cytomine.cytomine import _cytomine_parameter_name_synonyms
 from cytomine.models import Project, AnnotationCollection
 from cytomine.models.track import TrackCollection
 from imageio import volread
+
+from swc_to_tiff_stack import swc_to_tiff_stack
 
 
 class FakeJob(object):
@@ -104,6 +107,27 @@ def main(argv):
         os.makedirs(in_path)
         os.makedirs(gt_path)
         in_images, gt_images = download_images(fake_job, in_path, gt_path, gt_suffix="_lbl")
+
+        if project.disciplineShortName == "TreTrc":
+            # ground truth is contained in swc files so need to
+            # convert them into masks beforehand
+            print("TreTrc problem: start converting SWC to masks")
+            download_attached(in_images, gt_path, do_download=True)
+            alternate_gt_path = os.path.join(home, "data", "altgt")
+            os.makedirs(alternate_gt_path)
+            for in_image in in_images:
+                swc_filepath = in_image.attached[0].filepath
+                print("convert", swc_filepath)
+                im_size = imageio.volread(in_image.filepath).shape  # Size is Depth,Height,Width
+                im_size = im_size[::-1]  # Invert the size order to Width,Height,Depth
+                print(im_size)
+                swc_to_tiff_stack(
+                    input_path=swc_filepath,
+                    output_path=os.path.join(alternate_gt_path, in_image.filename),
+                    im_size=im_size
+                )
+            gt_path = alternate_gt_path
+
         is_2d = guess_dims(gt_path)
         print("Image detected as {}".format("2d" if is_2d else ">2d"))
         upload_data(problemclass=project.disciplineShortName,

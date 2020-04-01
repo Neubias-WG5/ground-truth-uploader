@@ -15,5 +15,6 @@ RUN git clone https://github.com/Neubias-WG5/biaflows-utilities.git && \
     rm -r /biaflows-utilities
 
 ADD script.py /app/script.py
+ADD swc_to_tiff_stack.py /app/swc_to_tiff_stack.py
 
 ENTRYPOINT ["python", "/app/script.py"]

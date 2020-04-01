@@ -132,7 +132,7 @@ def main(argv):
         print("Image detected as {}".format("2d" if is_2d else ">2d"))
         upload_data(problemclass=project.disciplineShortName,
                     nj=fake_job, inputs=in_images, out_path=gt_path,
-                    is_2d=is_2d)
+                    is_2d=is_2d, projection=-1)
 
 
 if __name__ == "__main__":

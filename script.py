@@ -117,10 +117,8 @@ def main(argv):
             os.makedirs(alternate_gt_path)
             for in_image in in_images:
                 swc_filepath = in_image.attached[0].filepath
-                print("convert", swc_filepath)
                 im_size = imageio.volread(in_image.filepath).shape  # Size is Depth,Height,Width
                 im_size = im_size[::-1]  # Invert the size order to Width,Height,Depth
-                print(im_size)
                 swc_to_tiff_stack(
                     input_path=swc_filepath,
                     output_path=os.path.join(alternate_gt_path, in_image.filename),

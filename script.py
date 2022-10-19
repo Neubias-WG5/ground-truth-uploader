@@ -57,7 +57,10 @@ def guess_dims(in_path):
         raise ValueError("Input files not found.")
     filepath = os.path.join(in_path, files[0])
     vol = volread(filepath)
-    return vol.ndim == 2
+    if len(vol.shape) == 5 and vol.shape[0] == 1 and vol.shape[1] == 1 and vol.shape[2] == 1:
+        return True
+    else:
+        return vol.ndim == 2
 
 
 def delete_collection(collec, name="annotation"):
